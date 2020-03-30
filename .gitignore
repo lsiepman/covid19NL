@@ -2,3 +2,6 @@
 *.zip
 *.exe
 *.rar
+
+#filenames
+/Gemeentegrenzen_2019*
