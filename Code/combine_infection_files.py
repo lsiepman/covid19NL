@@ -14,7 +14,8 @@ os.chdir("..")
 
 # overview of municipalities
 gemeenten = pd.read_excel("Gemeenten/Gemeenten alfabetisch 2020.xlsx")
-gemeenten = gemeenten[["Gemeentecode", "Gemeentenaam", "Provincienaam"]]
+gemeenten = gemeenten[["Gemeentecode", "Gemeentenaam", "Provincienaam",
+                       "Lat", "Lon"]]
 
 # all files with infection data, one file per day
 infections = {}
@@ -64,7 +65,8 @@ replacements = {"BeekDaelen": "Beekdaelen",
                 r"Súdwest Fryslân": r"Súdwest-Fryslân",
                 "Bergen (NH)": "Bergen (NH.)",
                 "Bergen (L)": "Bergen (L.)",
-                "Hengelo (O)": "Hengelo"}
+                "Hengelo (O)": "Hengelo",
+                "s-Gravenhage": "'s-Gravenhage"}
 
 # first input format
 for i in in_format1:
@@ -113,7 +115,7 @@ for i in in_format0:
     all_infections.rename(columns={"Aantal": date}, inplace=True)
 
 # sort columns
-col_start = ["Gemeentecode", "Gemeentenaam", "Provincienaam"]
+col_start = ["Gemeentecode", "Gemeentenaam", "Provincienaam", "Lat", "Lon"]
 col_dates = sorted([i for i in all_infections if i not in col_start])
 
 all_infections = all_infections[col_start + col_dates]
