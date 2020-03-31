@@ -123,9 +123,13 @@ all_infections.set_index(col_start, inplace=True)
 all_infections.fillna(0, inplace=True)
 all_infections = all_infections.astype(int)
 
-all_infections = all_infections.pivot_table(index=col_start,
-                                            margins=True,
-                                            margins_name="NL Totaal",
-                                            aggfunc=sum)
+df_sum = pd.DataFrame(all_infections.sum(axis=0)).reset_index()
+df_sum.columns = ["Datum", "Aantal"]
+
+# all_infections = all_infections.pivot_table(index=col_start,
+#                                             margins=True,
+#                                             margins_name="NL Totaal",
+#                                             aggfunc=sum)
 
 all_infections.to_csv("Corona_NL_in_time.csv")
+df_sum.to_csv("Daily_sum_infections.csv", index=False)
