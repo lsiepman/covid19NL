@@ -1,8 +1,44 @@
+// functions
+function colsForSlider(inputData){
+    var columns = inputData.columns
+    columns.splice(0, 5)
+    return columns
+}
+
+let formatDate = d3.timeFormat("%d %b %y");
+let formatStringDate = d3.timeFormat("%Y%m%d")
+
+function colToDate(colName){
+    let year = colName.substring(0, 4)
+    let month = colName.substring(4, 6)
+    let day = colName.substring(6, 8)
+    return new Date(`${year}-${month}-${day}`)
+}
+function stringToDate(inputArray){
+    let dateArray = []
+    
+    for(element of inputArray){
+        let year = element.substring(0, 4)
+        let month = element.substring(4, 6)
+        let day = element.substring(6, 8)
+        let date = new Date(`${year}-${month}-${day}`)
+        
+        dateArray.push(date)
+    } 
+     return dateArray
+}
+
+function dateToString(inputDate){
+    return formatStringDate(inputDate).toString(); 
+}
+
 // settings
 const svgWidth = 1000
 const svgHeight = 700
 const margin = {top: 10, bottom: 10, left: 100, right: 100}
 const textboxSettings = {width: 320, height: 100, x: 0, y: 0}
+let currentCol = "20200227"
+let currentDate = formatDate(colToDate(currentCol))
 
 
 // add create grid
@@ -31,28 +67,6 @@ const slider = d3.select("#data-row")
         .append("h5")
             .text("Select date")
 
-// functions
-function colsForSlider(inputData){
-    var columns = inputData.columns
-    columns.splice(0, 5)
-    return columns
-}
-
-let formatDate = d3.timeFormat("%d %b %y");
-
-function stringToDate(inputArray){
-    let dateArray = []
-    
-    for(element of inputArray){
-        let year = element.substring(0, 4)
-        let month = element.substring(4, 6)
-        let day = element.substring(6, 8)
-        let date = new Date(`${year}-${month}-${day}`)
-        
-        dateArray.push(date)
-    } 
-     return dateArray
-}
 
 // map
 const svg = d3.select("#data-row")
@@ -103,6 +117,29 @@ const handleMouseOver = (d, i, n) => {
                 .attr("class", "text")
                 .text(`${d.Gemeentenaam}`)
 
+    textboxGroup.append("text")
+        .attr("class", "textbox")
+        .attr("x", textboxSettings.x + 5)
+        .attr("y", textboxSettings.y + 50)
+        .attr("text-anchor", "start")
+        .append("tspan")
+            .attr("class", "label")
+            .text("Date: ")
+            .append("tspan")
+                .attr("class", "text")
+                .text(`${currentDate}`)
+
+    textboxGroup.append("text")
+        .attr("class", "textbox")
+        .attr("x", textboxSettings.x + 5)
+        .attr("y", textboxSettings.y + 75)
+        .attr("text-anchor", "start")
+        .append("tspan")
+            .attr("class", "label")
+            .text("Aantal besmettingen: ")
+            .append("tspan")
+                .attr("class", "text")
+                .text(`${d[currentCol]}`)
 
         
 }
@@ -141,20 +178,23 @@ const data = d3.csv("Corona_NL_in_time.csv").then(function(data){
 
     const relevantCols = colsForSlider(data)
     const dateCols = stringToDate(relevantCols)
-    console.log(dateCols.length)
+ 
 
-    var sliderVertical = d3
+    let sliderVertical = d3
         .sliderLeft()
         .min(d3.max(dateCols))
         .max(d3.min(dateCols))
-        .ticks(dateCols.length)
+        .tickValues(dateCols)
+        .step(1000 * 60 * 60 * 24) // from milisec to days
         .tickFormat(formatDate)
-        // .step(new Date())
         .height(svgHeight - margin.bottom - margin.top - 100)
-
+        .on('onchange', val => {
+            currentCol = dateToString(val)
+            currentDate = formatDate(colToDate(currentCol));
+          });
         
 
-   var gVertical = d3
+   let gVertical = d3
         .select('div#slider')
         .append('svg')
         .attr('width', 100)
