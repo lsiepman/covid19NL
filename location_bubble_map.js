@@ -31,6 +31,29 @@ const slider = d3.select("#data-row")
         .append("h5")
             .text("Select date")
 
+// functions
+function colsForSlider(inputData){
+    var columns = inputData.columns
+    columns.splice(0, 5)
+    return columns
+}
+
+let formatDate = d3.timeFormat("%d %b %y");
+
+function stringToDate(inputArray){
+    let dateArray = []
+    
+    for(element of inputArray){
+        let year = element.substring(0, 4)
+        let month = element.substring(4, 6)
+        let day = element.substring(6, 8)
+        let date = new Date(`${year}-${month}-${day}`)
+        
+        dateArray.push(date)
+    } 
+     return dateArray
+}
+
 // map
 const svg = d3.select("#data-row")
     .append("div")
@@ -57,19 +80,7 @@ const textbox = textboxGroup.append("rect")
     .attr("opacity", 0)
 
 
-var selectedColumn = "20200330"
-var year = selectedColumn.substring(0, 4)
-var month = selectedColumn.substring(4, 6)
-var day = selectedColumn.substring(6, 8)
-console.log(new Date(`${year}-${month}-${day}`))
 
-
-function colsForSlider(inputData){
-    var columns = inputData.columns
-    columns.splice(0, 5)
-    return columns
-
-}
 
 // interactivity mouseover
 const handleMouseOver = (d, i, n) => {
@@ -129,14 +140,19 @@ const data = d3.csv("Corona_NL_in_time.csv").then(function(data){
 
 
     const relevantCols = colsForSlider(data)
+    const dateCols = stringToDate(relevantCols)
+    console.log(dateCols.length)
 
     var sliderVertical = d3
         .sliderLeft()
-        .min(0)
-        .max(5)
+        .min(d3.max(dateCols))
+        .max(d3.min(dateCols))
+        .ticks(dateCols.length)
+        .tickFormat(formatDate)
+        // .step(new Date())
         .height(svgHeight - margin.bottom - margin.top - 100)
-        .ticks(5)
-        .default(2);
+
+        
 
    var gVertical = d3
         .select('div#slider')
@@ -150,65 +166,8 @@ const data = d3.csv("Corona_NL_in_time.csv").then(function(data){
 
 
 
-
-
 });
 
-    // const slider = textboxGroup.append("div")
-    //     .attr("id", "slider")
-    //     .attr("x", textboxSettings.x + 20)
-    //     .attr("y", textboxSettings.y + textboxSettings.height)
-        
-    // const sliderVertical = d3.sliderLeft()
-    //     .min(0)
-    //     .max(10)
-    //     .height(300)
-    //     .tickFormat(d3.format('.2%'))
-    //     .ticks(10)
-    //     .default(5)
-    //     .on('onchange', val => {
-    //         d3.select('p#value-vertical').text(d3.format('.2%')(val));
-    //       });
-        
-    // const gVertical = d3.select('div#slider')
-    // .append('svg')
-    // .attr('width', 100)
-    // .attr('height', 400)
-    // .append('g')
-    // .attr('transform', 'translate(60,30)');
-
-    // gVertical.call(sliderVertical);
-
-//     const divsSlider = textboxGroup.append("div")
-//         .attr("class", "row align-items-center")
-//         .attr("x", textboxSettings.x + 20)
-//         .attr("y", textboxSettings.y + textboxSettings.height)
-//         .append("div")
-//             .attr("id", "slider-vertical")
-//     })
-
-//     // Vertical
-//     var sliderVertical = d3
-//         .sliderLeft()
-//         .min(0)
-//         .max(5)
-//         .height(300)
-//         .tickFormat(d3.format('.2%'))
-//         .ticks(5)
-//         .default(2);
-        
-
-// var gVertical = d3
-//     .select('div#slider-vertical')
-//     .append('svg')
-//     .attr('width', 100)
-//     .attr('height', 400)
-//     .append('g')
-//     // .attr('transform', 'translate(80,30)');
-
-// gVertical.call(sliderVertical);
-
-// d3.select('p#value-vertical').text(d3.format('.2%')(sliderVertical.value()));
  
 
 
