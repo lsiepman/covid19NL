@@ -3,17 +3,17 @@ function colsForSlider(inputData){
     var columns = inputData.columns
     columns.splice(0, 5)
     return columns
-}
+};
 
 let formatDate = d3.timeFormat("%d %b %y");
-let formatStringDate = d3.timeFormat("%Y%m%d")
+let formatStringDate = d3.timeFormat("%Y%m%d");
 
 function colToDate(colName){
     let year = colName.substring(0, 4)
     let month = colName.substring(4, 6)
     let day = colName.substring(6, 8)
     return new Date(`${year}-${month}-${day}`)
-}
+};
 function stringToDate(inputArray){
     let dateArray = []
     
@@ -26,19 +26,19 @@ function stringToDate(inputArray){
         dateArray.push(date)
     } 
      return dateArray
-}
+};
 
 function dateToString(inputDate){
     return formatStringDate(inputDate).toString(); 
-}
+};
 
 // settings
-const svgWidth = 1000
-const svgHeight = 700
-const margin = {top: 10, bottom: 10, left: 100, right: 100}
-const textboxSettings = {width: 320, height: 100, x: 0, y: 0}
-let currentCol = "20200227"
-let currentDate = formatDate(colToDate(currentCol))
+const svgWidth = 900;
+const svgHeight = 600;
+const margin = {top: 10, bottom: 10, left: 100, right: 100};
+const textboxSettings = {width: 320, height: 100, x: 0, y: 0};
+let currentCol = "20200227";
+let currentDate = formatDate(colToDate(currentCol));
 
 
 // add create grid
@@ -55,9 +55,13 @@ grid.append("div")
       .attr("id", "data-row");
 
 // title
-const title = d3.select("#title")
-    .append("h3")
-        .text("COVID-19 cases in the Netherlands.")
+const title = d3.select("#title");
+    
+title.append("h4")
+        .text("COVID-19 cases in the Netherlands.");
+    
+title.append("p")
+        .text("Hover the mouse over the municipalities for infection information.");
 
 // slider
 const slider = d3.select("#data-row")
@@ -65,7 +69,7 @@ const slider = d3.select("#data-row")
         .attr("class", "col s2")
         .attr("id", "slider")
         .append("h5")
-            .text("Select date")
+            .text("Select date");
 
 
 // map
@@ -83,7 +87,7 @@ const graph = svg.append('g')
     .attr("height", svgHeight - margin.top - margin.bottom)
     .attr('transform', `translate(${margin.left}, ${margin.top})`); 
 
-const textboxGroup = svg.append("g")
+const textboxGroup = svg.append("g");
     
 const textbox = textboxGroup.append("rect")
     .attr("x", textboxSettings.x)
@@ -91,10 +95,7 @@ const textbox = textboxGroup.append("rect")
     .attr("width", textboxSettings.width)
     .attr("height", textboxSettings.height)
     .attr("fill", "#ffd280")
-    .attr("opacity", 0)
-
-
-
+    .attr("opacity", 0);
 
 // interactivity mouseover
 const handleMouseOver = (d, i, n) => {
@@ -112,10 +113,10 @@ const handleMouseOver = (d, i, n) => {
         .attr("text-anchor", "start")
         .append("tspan")
             .attr("class", "label")
-            .text("Gemeente: ")
+            .text("Municipality: ")
             .append("tspan")
                 .attr("class", "text")
-                .text(`${d.Gemeentenaam}`)
+                .text(`${d.Gemeentenaam}`);
 
     textboxGroup.append("text")
         .attr("class", "textbox")
@@ -127,7 +128,7 @@ const handleMouseOver = (d, i, n) => {
             .text("Date: ")
             .append("tspan")
                 .attr("class", "text")
-                .text(`${currentDate}`)
+                .text(`${currentDate}`);
 
     textboxGroup.append("text")
         .attr("class", "textbox")
@@ -136,33 +137,32 @@ const handleMouseOver = (d, i, n) => {
         .attr("text-anchor", "start")
         .append("tspan")
             .attr("class", "label")
-            .text("Aantal besmettingen: ")
+            .text("Number of infections: ")
             .append("tspan")
                 .attr("class", "text")
-                .text(`${d[currentCol]}`)
-
-        
+                .text(`${d[currentCol]}`);
+      
 }
     
 const handleMouseOut = (d, i, n) => {
     d3.select(n[i])
         .attr("fill", "blue")
-        .attr("r", 4)
+        .attr("r", 4);
 
     textbox.attr("opacity", 0);
     
-    d3.selectAll(".textbox").remove()
+    d3.selectAll(".textbox").remove();
 };
     
 const data = d3.csv("Corona_NL_in_time.csv").then(function(data){
     
     y = d3.scaleLinear()
         .range([svgHeight - margin.top - margin.bottom, 0])
-        .domain([50.7, 53.5])
+        .domain([50.7, 53.5]);
 
     x = d3.scaleLinear()
     .range([0, svgWidth - margin.left - margin.right])
-    .domain([3.258137, 7.134989])
+    .domain([3.258137, 7.134989]);
 
     const circles = graph.selectAll("circle")
             .data(data)
@@ -176,8 +176,8 @@ const data = d3.csv("Corona_NL_in_time.csv").then(function(data){
                 .on("mouseout", handleMouseOut);
 
 
-    const relevantCols = colsForSlider(data)
-    const dateCols = stringToDate(relevantCols)
+    const relevantCols = colsForSlider(data);
+    const dateCols = stringToDate(relevantCols);
  
 
     let sliderVertical = d3
@@ -203,8 +203,6 @@ const data = d3.csv("Corona_NL_in_time.csv").then(function(data){
         .attr('transform', 'translate(80,30)');
 
     gVertical.call(sliderVertical);
-
-
 
 });
 
