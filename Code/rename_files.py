@@ -8,7 +8,7 @@ Created on Thu Mar 19 10:25:42 2020.
 import os
 import re
 
-os.chdir("../Besmettingen RIVM")
+os.chdir("../Infections")
 files = os.listdir()
 
 new_names = []

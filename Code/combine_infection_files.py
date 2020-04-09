@@ -19,21 +19,21 @@ gemeenten = gemeenten[["Gemeentecode", "Gemeentenaam", "Provincienaam",
 
 # all files with infection data, one file per day
 infections = {}
-files = os.listdir("Besmettingen RIVM")
+files = os.listdir("Infections")
 sep_change = files.index("infections_20200312.csv")
-files_comma_sep = files[ :sep_change]
-files_semi_sep = files[sep_change: ]
+files_comma_sep = files[:sep_change]
+files_semi_sep = files[sep_change:]
 
 # comma separated
 for i in files_comma_sep:
     infections[Path(i).stem] = pd.read_csv(
-        os.path.join("Besmettingen RIVM", i))
+        os.path.join("Infections", i))
     infections[Path(i).stem].fillna(0, inplace=True)
 
 # semi-colon separated
 for i in files_semi_sep:
     infections[Path(i).stem] = pd.read_csv(
-        os.path.join("Besmettingen RIVM", i), sep=";")
+        os.path.join("Infections", i), sep=";")
     infections[Path(i).stem].fillna(0, inplace=True)
 
 # which days had a comparable inputformat?
