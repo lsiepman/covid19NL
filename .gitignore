@@ -2,11 +2,18 @@
 *.zip
 *.exe
 *.rar
+*.ipynb
 
 #filenames
 /Gemeentegrenzen_2019*
 test.html
+custom_argument_parsing.js
+test.js
+app.py
+index.html
+data.csv
 
 # folders
 shapes/
 Documenten/
+node_modules/
