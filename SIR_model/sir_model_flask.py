@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 from scipy.integrate import odeint
 from flask import Flask, render_template, url_for, request, jsonify
-import requests
+
 
 from calc_sir_model import sir_model
 
