@@ -1,44 +1,8 @@
-tMax = 365
-population = 10000
-console.log(graphData)
-// // Functions
-// function range(start, count) {
-//     return Array.apply(0, Array(count))
-//       .map((element, index) => index + start);
-// };
+// Define variables
+var infectionRate = 0.2
+var removalRate = 0.1
+var tMax = 365
 
-// function calcSusceptible(t){
-//     return -S*I*infectionRate
-// };
-
-// function calcInfected(){
-//     return infectionRate*S*I - removalRate*I
-// };
-
-// function calcRemoved(){
-//     return R + I*removalRate
-// };
-
-// function calcR0(infectionRate, removalRate){
-//     return infectionRate/removalRate
-// };
-
-
-// function createDataGraph(){
-//     dataArray = []
-    
-//     let days = range(0, tMax + 1) 
-
-//     for(day in days){
-//         S = calcSusceptible(day)
-//         I = calcInfected(day)
-//         R = calcRemoved(day)
-
-//         dataArray.push({time: day, susceptible: S, infected: I, removed: R});
-//     }
-    
-//     return dataArray
-// }
 // d3 line path generators
 let lineSus = d3.line()
 .x(function(d) { return x(d.Days); })
@@ -72,7 +36,6 @@ function plotGraph(){
         .attr("stroke-width", 2)
         .attr("d", lineInf);
 
-
     let pathRem = graph.append("path")
         .data([graphData])
         .attr("fill", "none")
@@ -81,7 +44,21 @@ function plotGraph(){
         .attr("d", lineRem)
 };
 
+function createDict(){
+    return {valInfectionRate: infectionRate, valRemovalRate: removalRate, valTMax: tMax}
+}
 
+function sendDataFlask(dict){
+    data = JSON.stringify(dict)    
+    // ajax the JSON to the server
+        $.post("getvars", data , function(){
+    
+        });
+        // stop link reloading the page
+     event.preventDefault(); 
+    
+     console.log(data)
+}
 const margin = { top: 40, right: 20, bottom: 50, left: 100 };
 
 // create grid
@@ -99,26 +76,26 @@ grid.append("div")
     .attr("class", "row")
     .attr("id", "interactive-row")
 
-// // parameter text
-// const paramContainer = d3.select("#param-row")
-//     .append("div")
-//     .attr("class", "col s5 offset-s7");
+// parameter text
+const paramContainer = d3.select("#param-row")
+    .append("div")
+    .attr("class", "col s5 offset-s7");
 
-// paramContainer.append("p")
-//     .attr("id", "infection-rate")
-//     .text(`Infection Rate: ${infectionRate}`);
+paramContainer.append("p")
+    .attr("id", "infection-rate")
+    .text(`Infection Rate: ${infectionRate}`);
 
-// paramContainer.append("p")
-//     .attr("id", "removal-rate")
-//     .text(`Removal Rate: ${removalRate}`);
+paramContainer.append("p")
+    .attr("id", "removal-rate")
+    .text(`Removal Rate: ${removalRate}`);
 
-// paramContainer.append("p")
-//     .attr("id", "maximum-time")
-//     .text(`Maximum time: ${tMax} days`);
+paramContainer.append("p")
+    .attr("id", "maximum-time")
+    .text(`Maximum time: ${tMax} days`);
 
-// paramContainer.append("p")
-//     .attr("id", "R-zero")
-//     .html(`R<sub>0</sub>: ${infectionRate/removalRate}`)
+paramContainer.append("p")
+    .attr("id", "R-zero")
+    .html(`R<sub>0</sub>: ${infectionRate/removalRate}`)
 
 
 const sliderContainer = grid.select("#interactive-row")
@@ -181,77 +158,78 @@ const yAxis = d3.axisLeft(y)
 yAxisGroup.call(yAxis);
 
 
-// // create sliders
-// let sliderInfectionRate = d3.sliderBottom()
-//     .min(0)
-//     .max(50)
-//     .width(300)
-//     .ticks(10)
-//     .step(0.01)
-//     .default(infectionRate)
-//     .on('onchange', val => {
-//       d3.select('p#infection-rate').text(`Infection Rate: ${val}`);
-//       d3.select("p#R-zero").html(`R<sub>0</sub>: ${val/removalRate}`)
-//       infectionRate = val;
-//     });
+// create sliders
+let sliderInfectionRate = d3.sliderBottom()
+    .min(0)
+    .max(50)
+    .width(300)
+    .ticks(10)
+    .step(0.01)
+    .default(infectionRate)
+    .on('onchange', val => {
+      d3.select('p#infection-rate').text(`Infection Rate: ${val}`);
+      d3.select("p#R-zero").html(`R<sub>0</sub>: ${val/removalRate}`)
+      infectionRate = val;
+      let dict = createDict()
+      sendDataFlask(dict)
+    });
 
-// let sliderInfectionRateGroup = d3
-// .select('div#infection-rate-slider')
-// .append('svg')
-// .attr('width', 500)
-// .attr('height', 100)
-// .append('g')
-// .attr('transform', 'translate(15, 15)');
+let sliderInfectionRateGroup = d3
+.select('div#infection-rate-slider')
+.append('svg')
+.attr('width', 500)
+.attr('height', 100)
+.append('g')
+.attr('transform', 'translate(15, 15)');
 
-// let sliderRemovalRate = d3.sliderBottom()
-//     .min(0)
-//     .max(50)
-//     .width(300)
-//     .ticks(10)
-//     .step(0.01)
-//     .default(removalRate)
-//     .on('onchange', val => {
-//       d3.select('p#removal-rate').text(`Removal Rate: ${val}`);
-//       d3.select("p#R-zero").html(`R<sub>0</sub>: ${infectionRate/val}`);
-//     });
+let sliderRemovalRate = d3.sliderBottom()
+    .min(0)
+    .max(50)
+    .width(300)
+    .ticks(10)
+    .step(0.01)
+    .default(removalRate)
+    .on('onchange', val => {
+      d3.select('p#removal-rate').text(`Removal Rate: ${val}`);
+      d3.select("p#R-zero").html(`R<sub>0</sub>: ${infectionRate/val}`);
+    });
 
-// let sliderRemovalRateGroup = d3
-// .select('div#removal-rate-slider')
-// .append('svg')
-// .attr('width', 500)
-// .attr('height', 100)
-// .append('g')
-// .attr('transform', 'translate(15,15)');
+let sliderRemovalRateGroup = d3
+.select('div#removal-rate-slider')
+.append('svg')
+.attr('width', 500)
+.attr('height', 100)
+.append('g')
+.attr('transform', 'translate(15,15)');
 
-// let sliderTMax = d3.sliderBottom()
-//     .min(0)
-//     .max(10*365)
-//     .width(300)
-//     .ticks(10)
-//     .step(1)
-//     .default(tMax)
-//     .on('onchange', val => {
-//       d3.select('p#maximum-time').text(`Maximum time: ${val} days`);
-//       x.domain([0, val])
-//       xAxisGroup.call(xAxis);
+let sliderTMax = d3.sliderBottom()
+    .min(0)
+    .max(10*365)
+    .width(300)
+    .ticks(10)
+    .step(1)
+    .default(tMax)
+    .on('onchange', val => {
+      d3.select('p#maximum-time').text(`Maximum time: ${val} days`);
+      x.domain([0, val])
+      xAxisGroup.call(xAxis);
     
-//     });
+    });
 
-// let sliderTMaxGroup = d3
-// .select('div#t-max-slider')
-// .append('svg')
-// .attr('width', 500)
-// .attr('height', 100)
-// .append('g')
-// .attr('transform', 'translate(15,15)');
+let sliderTMaxGroup = d3
+.select('div#t-max-slider')
+.append('svg')
+.attr('width', 500)
+.attr('height', 100)
+.append('g')
+.attr('transform', 'translate(15,15)');
 
-// sliderInfectionRateGroup.call(sliderInfectionRate);
-// sliderRemovalRateGroup.call(sliderRemovalRate);
-// sliderTMaxGroup.call(sliderTMax);
+sliderInfectionRateGroup.call(sliderInfectionRate);
+sliderRemovalRateGroup.call(sliderRemovalRate);
+sliderTMaxGroup.call(sliderTMax);
+
 
 plotGraph()
-
-
 
 
 
