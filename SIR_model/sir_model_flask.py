@@ -32,7 +32,7 @@ def home():
     """Create graph with initial values."""
     t_max = 365
     infection_rate = 0.2
-    removal_rate = 0.1
+    removal_rate = 0.01
 
     t = np.arange(0, t_max + 1)
     calc = odeint(sir_model, initial_conditions, t,
@@ -49,7 +49,7 @@ def home():
                            removal_rate=removal_rate)
 
 
-@app.route('/getvars', methods=["POST", "GET"])
+@app.route('/getvars', methods=["POST"])
 def get_vars():
     """Get slider values."""
     data = request.get_json(force=True)
@@ -70,4 +70,4 @@ def get_vars():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)

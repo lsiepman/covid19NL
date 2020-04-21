@@ -1,0 +1,28 @@
+body{
+    font-family: Arial;
+}
+#graph-container {
+    display: flex;
+    height: 100vh;
+}
+.graph{
+    width: 100vw;
+    display: flex;
+}
+.x-axis {
+    width: 100vw;
+    display: flex;
+}
+svg{
+    width: 100vw;
+    display: flex;
+}
+#sus-people{
+    color: blue;
+}
+#inf-people{
+    color: red;
+}
+#rem-people{
+    color: gray;
+}
