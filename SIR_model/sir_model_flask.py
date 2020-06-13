@@ -27,7 +27,7 @@ initial_conditions = initial_susceptible, initial_infected, initial_removed
 app = Flask(__name__)
 
 
-@app.route("/",  methods=["GET"])
+@app.route("/", methods=["GET"])
 def home():
     """Create graph with initial values."""
     t_max = 365
